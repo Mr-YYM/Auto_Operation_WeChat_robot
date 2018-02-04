@@ -1,11 +1,22 @@
 import requests
 import bs4
+import warnings
 
-res = requests.get('https://readhub.me/')
-soup = bs4.BeautifulSoup(res.text)
+warnings.filterwarnings('ignore')
 
-items = soup.select('div[class="topicItem___3YVLI"]')
 
-for each_item in items:
-    title = each_item.select('h2 span')[0]
-    print(title.text)
+def read_contents_from_readhub():
+    res = requests.get('https://readhub.me/')
+    soup = bs4.BeautifulSoup(res.text)
+    items = soup.select('div[class="topicItem___3YVLI"]')
+    contents = {each_item.select('h2 span')[0].text: each_item.select('div[class="summary___1i4y3"] div')[0].text
+                for each_item in items}
+
+    return contents
+
+#
+# cts = read_contents_from_readhub()
+#
+# for k, v in cts.items():
+#     print("%s:\n%s" % (k, v))
+#     print('----------------------------------------')
