@@ -1,5 +1,6 @@
 import requests
 import bs4
+import datetime
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -9,11 +10,15 @@ def read_contents_from_readhub():
     res = requests.get('https://readhub.me/')
     soup = bs4.BeautifulSoup(res.text)
     items = soup.select('div[class="topicItem___3YVLI"]')
-    contents = {each_item.select('h2 span')[0].text: each_item.select('div[class="summary___1i4y3"] div')[0].text[0:80]
-                + '...\n' + each_item.select('a')[0].get('href')
-                for each_item in items}
-    # contents = {each_item.select('h2 span')[0].text: each_item.select('a')[0].get('href')
-    #             for each_item in items}
+    contents = {
+        each_item.select('h2 span')[0].text:
+            {
+                 'date_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
+                 'content': each_item.select('div[class="summary___1i4y3"] div')[0].text,
+                 'link': each_item.select('a')[0].get('href')
+            }
+        for each_item in items
+    }
 
     return contents
 
