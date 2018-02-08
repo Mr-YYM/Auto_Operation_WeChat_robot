@@ -1,5 +1,14 @@
 import pymysql
 import logging
+import re
+
+
+def get_source_link(website):
+    r = re.search('(http|https)(.+)(\.com|\.cn|.org)', website)
+    if r is not None:
+        return r.group()
+    else:
+        return None
 
 
 def get_addition_contents(contents):
@@ -9,8 +18,10 @@ def get_addition_contents(contents):
     for title, v in contents.items():
         try:
             cursor.execute("INSERT INTO information "
-                           "(time, title, content, link) "
-                           "VALUES (%s, %s, %s, %s)", (v['date_time'], title, v['content'], v['link']))
+                           "(time, title, content, link, src_website) "
+                           "VALUES (%s, %s, %s, %s, %s)",
+                           (v['date_time'], title, v['content'], v['link'], get_source_link(v['link']))
+                           )
             addition_content[title] = v
             print("更新了" + title)
         except:
