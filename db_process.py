@@ -1,6 +1,7 @@
 import pymysql
 import logging
 
+
 def get_addition_contents(contents):
     info_db = pymysql.connect("localhost", "root", "123456", "info_crbotdb", charset='utf8mb4')
     cursor = info_db.cursor()
