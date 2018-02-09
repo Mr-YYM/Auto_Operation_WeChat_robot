@@ -32,7 +32,9 @@ def send_contents(sending_cts, member):
 
 if __name__ == '__main__':
     bot = wxpy.Bot(cache_path=True, console_qr=True)
-    me = bot.self
+    gs = bot.groups()
+    me = gs[3]
+    print(me.name)
     times = 0
     while 1:
         times += 1
