@@ -5,7 +5,7 @@ import time
 import logging
 
 
-def get_send_contents():
+def get_send_contents(amount=None):
     contents = data_getter.read_contents_from_readhub()
     add_cont = db_process.get_addition_contents(contents)
     send_cts = []
@@ -15,7 +15,10 @@ def get_send_contents():
     show_cts = '--------------------------------------------------------------\n'.join(send_cts)
     print(show_cts)
 
-    return send_cts
+    if amount is None or len(send_cts) < amount:
+        return send_cts
+    else:
+        return [send_cts[t] for t in range(amount)]
 
 
 def send_contents(sending_cts, member):
@@ -37,7 +40,7 @@ if __name__ == '__main__':
     times = 0
     while 1:
         times += 1
-        str_cts = get_send_contents()
+        str_cts = get_send_contents(2)
         send_contents(str_cts, me)
         print("进行了第%d轮action" % times)
         time.sleep(600)
