@@ -4,7 +4,7 @@ import re
 
 
 def get_source_link(website):
-    r = re.search('(http|https)(.+)(\.com|\.cn|.org)', website)
+    r = re.search('(http|https)(.+)(\.com|\.cn|\.org)', website)
     if r is not None:
         return r.group()
     else:
