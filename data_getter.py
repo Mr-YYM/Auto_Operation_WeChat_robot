@@ -2,12 +2,16 @@ import requests
 import bs4
 import datetime
 import warnings
+import logging
 
 warnings.filterwarnings('ignore')
 
 
 def read_contents_from_readhub():
-    res = requests.get('https://readhub.me/')
+    try:
+        res = requests.get('https://readhub.me/')
+    except Exception as exp:
+        logging.error("发生了一个错误：%s" % exp)
     soup = bs4.BeautifulSoup(res.text)
     items = soup.select('div[class="topicItem___3YVLI"]')
     contents = {
