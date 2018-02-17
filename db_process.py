@@ -24,7 +24,9 @@ def get_addition_contents(contents):
                            )
             addition_content[title] = v
             print("更新了" + title)
-        except:
+        except pymysql.IntegrityError:
             logging.error("已经有了：" + title)
+        except Exception as exp:
+            logging.error("error:" + exp)
     info_db.commit()
     return addition_content
