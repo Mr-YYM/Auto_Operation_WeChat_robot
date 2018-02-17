@@ -28,7 +28,7 @@ def send_contents(contents, member):
             logging.error('发送了第{0}个'.format(k + 1))
             if k + 1 == len(contents):
                 break
-            time.sleep(10)
+            time.sleep(60)
     else:
         print('nothing')
 
