@@ -29,7 +29,9 @@ http://wxpy.readthedocs.io/zh/latest/
 sample：
 
 【放弃 WP 是必然：微软持续推进 Surface Phone】
+
 之前微软曾宣布，从 2 月 20 日起，Windows Phone 7 以及 Windows Phone 8 系统的手机用户，将不再支持通知信息推送，而一些有价值的动态方块更新功能也将停止 ... 了，Windows Phone 8.1、Windows 10 移动版的用户将依然享受上述功能，不过这样状况也不会持续太久，仅仅只是维持，因为微软已经从根本上放弃了这个移动系统 ... 从外媒给出的最新报道称，放弃 WP 系统后，微软目前仍然在秘密暗中推进自家的 Surface Phone 项目，这不仅仅是一台手机那么简单，而众多专利图显示，该设备采用双屏折叠设计，合起来是手机的形态，而展开后就是个微型电脑，属于 One Core 大框架下的产品。
+
 http://go.rss.sina.com.cn/redirect.php?url=http://tech.sina.com.cn/mobile/n/n/2018-02-22/doc-ifyrswmu8256844.shtml
 
 
