@@ -19,13 +19,14 @@ def get_send_contents(amount=None):
 
 
 def send_contents(contents, member):
-    print('有这么一些需要发送：\n')
-    show_cts = '--------------------------------------------------------------\n'.join(contents)
-    print(show_cts)
     if len(contents) != 0:
+        print('有这么一些需要发送：\n')
+        show_cts = '--------------------------------------------------------------\n'.join(contents)
+        print(show_cts)
+
         for k, v in enumerate(contents):
             member.send(v)
-            logging.error('发送了第{0}个'.format(k + 1))
+            logging.error('已经发送了第{0}个'.format(k + 1))
             if k + 1 == len(contents):
                 break
             time.sleep(60)
@@ -41,7 +42,8 @@ if __name__ == '__main__':
     times = 0
     while 1:
         times += 1
+        print("☆☆开始进行第%d轮action☆☆\n%s" % (times, '-'*60))
         str_cts = get_send_contents(2)
+        print("☆☆刚刚获取了一些信息☆☆\n%s" % '-' * 60)
         send_contents(str_cts, me)
-        print("进行了第%d轮action" % times)
-        time.sleep(600)
+        time.sleep(900)

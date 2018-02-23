@@ -4,7 +4,10 @@ import re
 
 
 def get_source_link(website):
-    r = re.search('(http|https)(.+)(\.com|\.cn|\.org)', website)
+    if re.search('url=', website) is not None:
+        return re.split('url', website)[1]
+    else:
+        r = re.search('(http|https)(.+)(\.com|\.cn|\.org)', website)
     if r is not None:
         return r.group()
     else:
