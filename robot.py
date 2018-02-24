@@ -35,15 +35,23 @@ def send_contents(contents, member):
 
 
 if __name__ == '__main__':
-    bot = wxpy.Bot(cache_path=True)
-    # me = bot.search('【可聊】广海互联网社群')[0]
-    me = bot.self
+    bot = wxpy.Bot(cache_path=True, console_qr=1)
+    me = bot.search('【可聊】广海互联网社群')[0]
+    # me = bot.self
     print(me.name)
     times = 0
     while 1:
         times += 1
         print("☆☆开始进行第%d轮action☆☆\n%s" % (times, '-'*60))
-        str_cts = get_send_contents(2)
+        try:
+            str_cts = get_send_contents(2)
+        except wxpy.ResponseError as exp:
+            if exp.err_code == 1100 or 1101 or 1102:
+                print('☆☆账号异常退出，请重新登录☆☆')
+                bot = wxpy.Bot(cache_path=True, console_qr=1)
+            else:
+                print('发生了一些错误：', exp)
+                break
         print("☆☆刚刚获取了一些信息☆☆\n%s" % '-' * 60)
         send_contents(str_cts, me)
         time.sleep(900)
