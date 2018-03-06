@@ -6,9 +6,8 @@ import data_getter
 
 def get_source_link(website):
     if re.search('url=', website) is not None:
-        return re.split('url', website)[1]
-    else:
-        r = re.search('(http|https)(.+)(\.com|\.cn|\.org|\.net)', website)
+        website = re.split('url=', website)[1]
+    r = re.search('(http|https)(.+)(\.com|\.cn|\.org|\.net)', website)
     if r is not None:
         return r.group()
     else:
