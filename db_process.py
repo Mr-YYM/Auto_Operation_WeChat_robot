@@ -1,6 +1,7 @@
 import pymysql
 import logging
 import re
+import data_getter
 
 
 def get_source_link(website):
@@ -33,3 +34,7 @@ def get_addition_contents(contents):
             logging.error("error:" + exp)
     info_db.commit()
     return addition_content
+
+
+if __name__ == '__main__':
+    ad = get_addition_contents(data_getter.read_contents_from_readhub())
