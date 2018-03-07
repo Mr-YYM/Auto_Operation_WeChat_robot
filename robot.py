@@ -5,19 +5,6 @@ import time
 import logging
 
 
-def get_send_contents(amount=None):
-    contents = data_getter.read_contents_from_readhub()
-    add_cont = db_process.get_addition_contents(contents)
-    send_cts = []
-    for title, v in add_cont.items():
-        send_cts.append('【%s】\n%s\n%s\n' % (title, v['content'], v['link']))
-
-    if amount is None or len(send_cts) < amount:
-        return send_cts
-    else:
-        return [send_cts[t] for t in range(amount)]
-
-
 def send_contents(contents, member):
     if len(contents) != 0:
         print('有这么一些需要发送：\n')
@@ -43,8 +30,14 @@ if __name__ == '__main__':
     while 1:
         times += 1
         print("☆☆开始进行第%d轮action☆☆\n%s" % (times, '-'*60))
+
+        cts = data_getter.read_contents_from_readhub()  # raw contents
+        add_cts = db_process.get_addition_contents(cts)  # insert contents into database and get addition contents
+        fmt_cts = data_getter.get_formatted_contents(add_cts, 2)  # formatting contents
+        to_send_cts = data_getter.get_limited_amount_contents(fmt_cts)  # final contents in a limited amount
+
         try:
-            str_cts = get_send_contents(2)
+            send_contents(to_send_cts, me)
         except wxpy.ResponseError as exp:
             if exp.err_code == 1100 or 1101 or 1102:
                 print('☆☆账号异常退出，请重新登录☆☆')
@@ -53,5 +46,4 @@ if __name__ == '__main__':
                 print('发生了一些错误：', exp)
                 break
         print("☆☆刚刚获取了一些信息☆☆\n%s" % '-' * 60)
-        send_contents(str_cts, me)
         time.sleep(900)
