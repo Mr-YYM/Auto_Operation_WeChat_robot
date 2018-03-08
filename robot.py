@@ -23,7 +23,7 @@ def send_contents(contents, member):
 
 if __name__ == '__main__':
     bot = wxpy.Bot(cache_path=True, console_qr=1)
-    me = bot.search('【可聊】广海互联网社群')[0]
+    me = bot.search('【资讯】广海互联网社群')[0]
     # me = bot.self
     print(me.name)
     times = 0
@@ -38,6 +38,7 @@ if __name__ == '__main__':
 
         try:
             send_contents(to_send_cts, me)
+            print("☆☆刚刚获取了一些信息☆☆\n%s" % '-' * 60)
         except wxpy.ResponseError as exp:
             if exp.err_code == 1100 or 1101 or 1102:
                 print('☆☆账号异常退出，请重新登录☆☆')
@@ -45,5 +46,4 @@ if __name__ == '__main__':
             else:
                 print('发生了一些错误：', exp)
                 break
-        print("☆☆刚刚获取了一些信息☆☆\n%s" % '-' * 60)
         time.sleep(900)
