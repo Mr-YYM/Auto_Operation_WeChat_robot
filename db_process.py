@@ -1,6 +1,5 @@
 import pymysql
 import logging
-import data_getter
 
 
 def get_addition_contents(contents):
@@ -12,7 +11,7 @@ def get_addition_contents(contents):
             cursor.execute("INSERT INTO information "
                            "(time, title, content, link, src_website) "
                            "VALUES (%s, %s, %s, %s, %s)",
-                           (v['date_time'], title, v['content'], v['link'], data_getter.get_source_link(v['link']))
+                           (v['date_time'], title, v['content'], v['link'], v['src_website'])
                            )
             addition_content[title] = v
             print("更新了" + title)
@@ -24,5 +23,5 @@ def get_addition_contents(contents):
     return addition_content
 
 
-if __name__ == '__main__':
-    ad = get_addition_contents(data_getter.read_contents_from_readhub())
+# if __name__ == '__main__':
+#     ad = get_addition_contents(data_getter.read_contents_from_readhub())

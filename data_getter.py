@@ -50,6 +50,9 @@ def read_contents_from_readhub():
             for each_item in items
         }
 
+        for _, each_cts in contents.items():
+            each_cts['src_website'] = get_source_link(each_cts['link'])
+
         return contents
     except Exception as exp:
         logging.error("发生了一个错误：%s" % exp)
@@ -57,7 +60,6 @@ def read_contents_from_readhub():
 
 if __name__ == '__main__':
     cts = read_contents_from_readhub()
-
     for k, v in cts.items():
-        print("%s:\n%s" % (k, v))
+        print("【%s】\n%s\n%s" % (k, v['content'], v['link']))
         print('----------------------------------------')
