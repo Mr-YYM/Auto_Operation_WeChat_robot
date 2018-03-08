@@ -33,15 +33,15 @@ if __name__ == '__main__':
 
         cts = data_getter.read_contents_from_readhub()  # raw contents
         add_cts = db_process.get_addition_contents(cts)  # insert contents into database and get addition contents
-        fmt_cts = data_getter.get_formatted_contents(add_cts, 2)  # formatting contents
-        to_send_cts = data_getter.get_limited_amount_contents(fmt_cts)  # final contents in a limited amount
+        fmt_cts = data_getter.get_formatted_contents(add_cts)  # formatting contents
+        to_send_cts = data_getter.get_limited_amount_contents(fmt_cts, 2)  # final contents in a limited amount
 
         try:
             send_contents(to_send_cts, me)
         except wxpy.ResponseError as exp:
             if exp.err_code == 1100 or 1101 or 1102:
                 print('☆☆账号异常退出，请重新登录☆☆')
-                bot = wxpy.Bot(cache_path=True, console_qr=1)
+                bot = wxpy.Bot(console_qr=1)
             else:
                 print('发生了一些错误：', exp)
                 break
