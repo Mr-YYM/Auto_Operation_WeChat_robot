@@ -1,4 +1,4 @@
-# Auto_subscribe_info_WeChat_robot
+# Auto_Operation_WeChat_robot
 
 这个项目是一个微信机器人，由广东海洋大学互联网社群技术部开发。通过本机器人可以实现自动化的管理社群涉及的大量群聊，减轻管理人员的压力。
 
