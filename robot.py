@@ -1,6 +1,5 @@
 import wxpy
 import data_getter
-import db_process
 import time
 import logging
 
@@ -21,20 +20,17 @@ def send_contents(contents, member):
         print('nothing')
 
 
-if __name__ == '__main__':
-    bot = wxpy.Bot(cache_path=True, console_qr=1)
-    me = bot.search('【资讯】广海互联网社群')[0]
+def send_news_to_groups(a_bot):
+    me = a_bot.search('【资讯】广海互联网社群')[0]
     # me = bot.self
     print(me.name)
+
     times = 0
     while 1:
         times += 1
-        print("☆☆开始进行第%d轮action☆☆\n%s" % (times, '-'*60))
+        print("☆☆群【%s】开始进行第%d轮action☆☆\n%s" % (me.name, times, '-' * 60))
 
-        cts = data_getter.read_contents_from_readhub()  # raw contents
-        add_cts = db_process.get_addition_contents(cts)  # insert contents into database and get addition contents
-        fmt_cts = data_getter.get_formatted_contents(add_cts)  # formatting contents
-        to_send_cts = data_getter.get_limited_amount_contents(fmt_cts, 2)  # final contents in a limited amount
+        to_send_cts = data_getter.get_send_cts()
 
         try:
             send_contents(to_send_cts, me)
@@ -42,8 +38,13 @@ if __name__ == '__main__':
         except wxpy.ResponseError as exp:
             if exp.err_code == 1100 or 1101 or 1102:
                 print('☆☆账号异常退出，请重新登录☆☆')
-                bot = wxpy.Bot(console_qr=1)
+                a_bot = wxpy.Bot(console_qr=1)
             else:
                 print('发生了一些错误：', exp)
                 break
         time.sleep(900)
+
+
+if __name__ == '__main__':
+    bot = wxpy.Bot(cache_path=True, console_qr=1)
+    send_news_to_groups(bot)
