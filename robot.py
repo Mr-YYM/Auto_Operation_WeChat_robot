@@ -46,5 +46,33 @@ def send_news_to_groups(a_bot):
 
 
 if __name__ == '__main__':
-    bot = wxpy.Bot(cache_path=True, console_qr=1)
+    bot = wxpy.Bot()
+    s_keys = {'产品': '【产品】广海互联网细分群',
+              '设计': '【设计】广海互联网细分群',
+              '运营': '【运营】广海互联网细分群',
+              '技术': '【技术】广海互联网细分群',
+              '市场': '【市场】广海互联网细分群',
+              '区块链': '【区块链】广海互联网专题群',
+              '福利': '【福利】广海互联网社群',
+              '游戏': '【游戏】广海互联网社群',
+              '资讯': '【资讯】广海互联网社群'}
+    keys = {}
+    for k, v in s_keys.items():
+        gs = bot.search(v)
+        if gs:
+            keys[k] = gs[0]
+
+
+    @bot.register(wxpy.Member)
+    def fun(msg):
+        if msg.type == wxpy.TEXT:
+            if msg.text in keys.keys() and msg.sender not in keys[msg.text].members:
+                print(msg)
+                try:
+                    keys[msg.text].add_members(msg.sender)
+                except:
+                    msg.sender.send('似乎无法添加进群啊！！！')
+            else:
+                return '你已经在群里边了吧'
+
     send_news_to_groups(bot)
