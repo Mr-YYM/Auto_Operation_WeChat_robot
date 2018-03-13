@@ -31,10 +31,10 @@ def send_news_to_groups(a_bot):
         print("☆☆群【%s】开始进行第%d轮action☆☆\n%s" % (me.name, times, '-' * 60))
 
         to_send_cts = data_getter.get_send_cts()
+        print("☆☆刚刚获取了一些信息☆☆\n%s" % ('-' * 60))
 
         try:
             send_contents(to_send_cts, me)
-            print("☆☆刚刚获取了一些信息☆☆\n%s" % ('-' * 60))
         except wxpy.ResponseError as exp:
             if exp.err_code == 1100 or 1101 or 1102:
                 print('☆☆账号异常退出，请重新登录☆☆')
