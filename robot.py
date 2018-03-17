@@ -6,39 +6,49 @@ from threading import Thread
 
 
 def send_contents(contents, member):
-    if len(contents) != 0:
+    if contents:
         print('有这么一些需要发送：\n')
         show_cts = '--------------------------------------------------------------\n'.join(contents)
         print(show_cts)
 
         for k, v in enumerate(contents):
-            member.send(v)
-            logging.error('已经发送了第{0}个'.format(k + 1))
+            try:
+                member.send(v)
+                logging.error('已经发送了第{0}个'.format(k + 1))
+            except wxpy.ResponseError as exp:
+                if exp.err_code == 1100 or 1101 or 1102:
+                    print('☆☆账号异常退出，请重新登录☆☆')
+                else:
+                    print('发生了一些错误：', exp)
+
+                break
+
             if k + 1 == len(contents):
                 break
             time.sleep(60)
     else:
-        print('nothing')
+        print('【%s】nothing' % member.name)
 
 
 def send_news_to_groups(a_group, interval):
     times = 0
+    previous_cts = []
     while 1:
         times += 1
-        print("☆☆群【%s】开始进行第%d轮action☆☆\n%s" % (a_group.name, times, '-' * 60))
+        print('{line}{group:^16}{line}\n{action:>45}'.format(line='-' * 30, group=a_group.name,
+                                                             action='开始进行第%d轮action' % times))
 
-        to_send_cts = data_getter.get_send_cts()
-        print("☆☆刚刚获取了一些信息☆☆\n%s" % ('-' * 60))
+        if times != 1:
+            previous_cts = ready_to_send_cts
 
-        try:
-            send_contents(to_send_cts, a_group)
-        except wxpy.ResponseError as exp:
-            if exp.err_code == 1100 or 1101 or 1102:
-                print('☆☆账号异常退出，请重新登录☆☆')
-            else:
-                print('发生了一些错误：', exp)
+        ready_to_send_cts = data_getter.get_send_cts()
 
-        time.sleep(interval*60)
+        to_send_cts = [er for er in ready_to_send_cts if er not in previous_cts]
+        print("☆☆群【%s】刚刚获取了一些信息☆☆\n%s" % (a_group.name, '-' * 60))
+
+        send_contents(to_send_cts, a_group)
+
+        time.sleep(interval * 60)
 
 
 if __name__ == '__main__':
@@ -57,6 +67,8 @@ if __name__ == '__main__':
         gs = bot.search(v)
         if gs:
             keys[k] = gs[0]
+
+    print(keys)
 
 
     @bot.register(wxpy.Member)
@@ -77,8 +89,10 @@ if __name__ == '__main__':
     # me = bot.self
     print(g_info.name)
 
-    t = Thread(target=send_news_to_groups, args=(g_info, 15,))
+    data_getter.auto_update_db(15)
+
+    t = Thread(target=send_news_to_groups, args=(g_info, 10))
     t.start()
 
-    t2 = Thread(target=send_news_to_groups, args=(g_test, 1,))
+    t2 = Thread(target=send_news_to_groups, args=(g_test, 1))
     t2.start()

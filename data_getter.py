@@ -5,14 +5,27 @@ import warnings
 import logging
 import re
 import db_process
+import time
+from threading import Thread
 
 warnings.filterwarnings('ignore')
 
 
-def get_send_cts():
-    cts = read_contents_from_readhub()  # raw contents
-    add_cts = db_process.get_addition_contents(cts)  # insert contents into database and get addition contents
-    fmt_cts = get_formatted_contents(add_cts)  # formatting contents
+def auto_update_db(interval):
+    t = Thread(target=update_db, args=(interval, ))
+    t.start()
+
+
+def update_db(interval=15):
+    while 1:
+        cts = read_contents_from_readhub()
+        db_process.insert_cts_toDB(cts)
+        time.sleep(interval*60)
+
+
+def get_send_cts(amount=2):
+    cts = db_process.get_contents(amount)  # insert contents into database and get addition contents
+    fmt_cts = get_formatted_contents(cts)  # formatting contents
     to_send_cts = get_limited_amount_contents(fmt_cts, 2)  # final contents in a limited amount
     return to_send_cts
 
