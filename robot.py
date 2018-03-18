@@ -14,7 +14,7 @@ def send_contents(contents, member):
         for k, v in enumerate(contents):
             try:
                 member.send(v)
-                logging.error('已经发送了第{0}个'.format(k + 1))
+                logging.error('【{name}】已经发送了第{count}个'.format(name=member.name, count=k + 1))
             except wxpy.ResponseError as exp:
                 if exp.err_code == 1100 or 1101 or 1102:
                     print('☆☆账号异常退出，请重新登录☆☆')
@@ -44,7 +44,7 @@ def send_news_to_groups(a_group, interval):
         ready_to_send_cts = data_getter.get_send_cts()
 
         to_send_cts = [er for er in ready_to_send_cts if er not in previous_cts]
-        print("☆☆群【%s】刚刚获取了一些信息☆☆\n%s" % (a_group.name, '-' * 60))
+        print("☆☆群【%s】刚刚获取了一些信息☆☆\n" % a_group.name)
 
         send_contents(to_send_cts, a_group)
 
@@ -52,6 +52,7 @@ def send_news_to_groups(a_group, interval):
 
 
 if __name__ == '__main__':
+    # ------->机器人关键字识别，待进一步实现完善，重构！<--------
     bot = wxpy.Bot(cache_path=True)
     s_keys = {'产品': '【产品】广海互联网细分群',
               '设计': '【设计】广海互联网细分群',
@@ -82,17 +83,17 @@ if __name__ == '__main__':
                     msg.sender.send('似乎无法添加进群啊！！！')
             else:
                 return '你已经在群里边了吧'
-
+    # ↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑
 
     g_info = bot.search('【资讯】广海互联网社群')[0]
     g_test = bot.search('机器人测试')[0]
     # me = bot.self
     print(g_info.name)
 
-    data_getter.auto_update_db(15)
+    data_getter.auto_update_db(interval=15)
 
-    t = Thread(target=send_news_to_groups, args=(g_info, 10))
+    t = Thread(target=send_news_to_groups, args=(g_info, 10, ))
     t.start()
 
-    t2 = Thread(target=send_news_to_groups, args=(g_test, 1))
+    t2 = Thread(target=send_news_to_groups, args=(g_test, 1, ))
     t2.start()
