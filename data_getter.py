@@ -6,6 +6,7 @@ import logging
 import re
 import db_process
 import time
+import random
 from threading import Thread
 
 warnings.filterwarnings('ignore')
@@ -24,9 +25,9 @@ def update_db(interval=15):
 
 
 def get_send_cts(amount=2):
-    cts = db_process.get_contents(amount)  # insert contents into database and get addition contents
+    cts = db_process.get_contents(10)  # insert contents into database and get addition contents
     fmt_cts = get_formatted_contents(cts)  # formatting contents
-    to_send_cts = get_limited_amount_contents(fmt_cts, 2)  # final contents in a limited amount
+    to_send_cts = get_limited_amount_contents(fmt_cts, amount)  # final contents in a limited amount
     return to_send_cts
 
 
@@ -54,7 +55,7 @@ def get_limited_amount_contents(contents, amount=None):
     if amount is None or len(contents) < amount:
         return contents
     else:
-        return [contents[t] for t in range(amount)]
+        return random.sample(contents, amount)
 
 
 def read_contents_from_readhub():

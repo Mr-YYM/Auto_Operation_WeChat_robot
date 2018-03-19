@@ -1,3 +1,5 @@
+import re
+
 import wxpy
 import data_getter
 import time
@@ -39,11 +41,14 @@ def send_news_to_groups(a_group, interval):
                                                              action='开始进行第%d轮action' % times))
 
         if times != 1:
-            previous_cts = ready_to_send_cts
+            previous_cts += ready_to_send_cts
+
+        if len(previous_cts) > 20:
+            previous_cts = []
 
         ready_to_send_cts = data_getter.get_send_cts()
 
-        to_send_cts = [er for er in ready_to_send_cts if er not in previous_cts]
+        to_send_cts = [er for er in ready_to_send_cts if er not in set(previous_cts)]
         print("☆☆群【%s】刚刚获取了一些信息☆☆\n" % a_group.name)
 
         send_contents(to_send_cts, a_group)
@@ -52,37 +57,66 @@ def send_news_to_groups(a_group, interval):
 
 
 if __name__ == '__main__':
+    key_text = '''【产品】广海互联网细分群：产品
+【设计】广海互联网细分群：设计
+【运营】广海互联网细分群：运营
+【技术】广海互联网细分群：技术
+【市场】广海互联网细分群：市场
+【区块链】广海互联网主题群：区块链
+【福利】广海互联网社群：福利
+【游戏】广海互联网社群：游戏
+【资讯】广海互联网社群：资讯
+'''
     # ------->机器人关键字识别，待进一步实现完善，重构！<--------
     bot = wxpy.Bot(cache_path=True)
-    s_keys = {'产品': '【产品】广海互联网细分群',
-              '设计': '【设计】广海互联网细分群',
-              '运营': '【运营】广海互联网细分群',
-              '技术': '【技术】广海互联网细分群',
-              '市场': '【市场】广海互联网细分群',
-              '区块链': '【区块链】广海互联网专题群',
-              '福利': '【福利】广海互联网社群',
-              '游戏': '【游戏】广海互联网社群',
-              '资讯': '【资讯】广海互联网社群'}
-    keys = {}
-    for k, v in s_keys.items():
-        gs = bot.search(v)
-        if gs:
-            keys[k] = gs[0]
+    groups = bot.groups()
 
-    print(keys)
+    mt = '【.*】广海互联网.*群'
+    guanghai_groups = [each_group for each_group in groups if re.match(mt, each_group.name) is not None]
+
+    key_mt = '【.*】'
+    join_keys = {}
+
+    for eg in guanghai_groups:
+        r = re.search(key_mt, eg.name)
+        if r is not None:
+            join_keys[r.group()[1:-1]] = eg
+
+    print(join_keys)
 
 
-    @bot.register(wxpy.Member)
+    @bot.register(wxpy.Friend)
     def fun(msg):
         if msg.type == wxpy.TEXT:
-            if msg.text in keys.keys() and msg.sender not in keys[msg.text].members:
-                print(msg)
-                try:
-                    keys[msg.text].add_members(msg.sender)
-                except:
-                    msg.sender.send('似乎无法添加进群啊！！！')
-            else:
-                return '你已经在群里边了吧'
+            if msg.text in join_keys.keys():
+                    if msg.sender not in join_keys[msg.text].members:
+                        print(msg)
+                        try:
+                            join_keys[msg.text].add_members(msg.sender)
+                        except:
+                            msg.sender.send('似乎无法添加进群啊！！！')
+                    elif msg.sender in join_keys[msg.text].members:
+                        return '你已经在群里边了吧'
+
+            if msg.text == '关键字':
+                return key_text
+
+
+    # 注册好友请求类消息
+    @bot.register(msg_types=wxpy.FRIENDS)
+    # 自动接受验证信息中包含 'wxpy' 的好友请求
+    def auto_accept_friends(msg):
+        # 判断好友请求中的验证文本
+        if 'wxpy' in msg.text.lower():
+            # 接受好友 (msg.card 为该请求的用户对象)
+            new_friend = bot.accept_friend(msg.card)
+            # 或 new_friend = msg.card.accept()
+            # 向新的好友发送消息
+            new_friend.send('哈哈，我自动接受了你的好友请求')
+
+    while 1:
+        print('running')
+        time.sleep(2)
     # ↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑
 
     g_info = bot.search('【资讯】广海互联网社群')[0]
