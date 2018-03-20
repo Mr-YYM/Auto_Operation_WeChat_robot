@@ -1,5 +1,4 @@
 import re
-
 import wxpy
 import data_getter
 import time
@@ -114,9 +113,6 @@ if __name__ == '__main__':
             # 向新的好友发送消息
             new_friend.send('哈哈，我自动接受了你的好友请求')
 
-    while 1:
-        print('running')
-        time.sleep(2)
     # ↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑
 
     g_info = bot.search('【资讯】广海互联网社群')[0]
