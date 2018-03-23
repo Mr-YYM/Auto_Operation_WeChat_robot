@@ -10,7 +10,7 @@
 
 数据库长这样：
 
-![db_sample](https://raw.githubusercontent.com/Mr-YYM/Auto_subscribe_info_WeChat_robot/master/db_sample.png)
+![db_sample](https://codingnote.oss-cn-shenzhen.aliyuncs.com/db_sample.png)
 
 ### 3、将得到的新闻内容发送到指定的微信群
 #### 机器人能够同时管理多个群
@@ -40,7 +40,7 @@ http://tech.sina.com.cn/mobile/n/n/2018-02-22/doc-ifyrswmu8256844.shtml
 1、创建一个数据库，名为info_crbotdb (你也可以自定义名字，但需要更改程序)
 2、创建一个名为information的表，表结构设计如下：
 
-![db_style](https://raw.githubusercontent.com/Mr-YYM/Auto_subscribe_info_WeChat_robot/master/db_style.png)
+![db_style](https://codingnote.oss-cn-shenzhen.aliyuncs.com/db_style.png)
 
 表结构代码如下：
 
