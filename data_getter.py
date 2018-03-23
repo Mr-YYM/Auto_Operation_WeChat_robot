@@ -5,15 +5,29 @@ import warnings
 import logging
 import re
 import db_process
+import time
+import random
+from threading import Thread
 
 warnings.filterwarnings('ignore')
 
 
-def get_send_cts():
-    cts = read_contents_from_readhub()  # raw contents
-    add_cts = db_process.get_addition_contents(cts)  # insert contents into database and get addition contents
-    fmt_cts = get_formatted_contents(add_cts)  # formatting contents
-    to_send_cts = get_limited_amount_contents(fmt_cts, 2)  # final contents in a limited amount
+def auto_update_db(interval):
+    t = Thread(target=update_db, args=(interval,))
+    t.start()
+
+
+def update_db(interval=15):
+    while 1:
+        cts = read_contents_from_readhub()
+        db_process.insert_cts_toDB(cts)
+        time.sleep(interval * 60)
+
+
+def get_send_cts(amount=2):
+    cts = db_process.get_contents(10)  # insert contents into database and get addition contents
+    fmt_cts = get_formatted_contents(cts)  # formatting contents
+    to_send_cts = get_limited_amount_contents(fmt_cts, amount)  # final contents in a limited amount
     return to_send_cts
 
 
@@ -41,7 +55,7 @@ def get_limited_amount_contents(contents, amount=None):
     if amount is None or len(contents) < amount:
         return contents
     else:
-        return [contents[t] for t in range(amount)]
+        return random.sample(contents, amount)
 
 
 def read_contents_from_readhub():
@@ -52,9 +66,9 @@ def read_contents_from_readhub():
         contents = {
             each_item.select('h2 span')[0].text:
                 {
-                     'date_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
-                     'content': each_item.select('div[class="summary___1i4y3"] div')[0].text,
-                     'link': is_sina_link(each_item.select('a')[0].get('href'))
+                    'date_time': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
+                    'content': each_item.select('div[class="summary___1i4y3"] div')[0].text,
+                    'link': is_sina_link(each_item.select('a')[0].get('href'))
                 }
             for each_item in items
         }
@@ -68,7 +82,9 @@ def read_contents_from_readhub():
 
 
 if __name__ == '__main__':
-    cts = read_contents_from_readhub()
-    for k, v in cts.items():
-        print("【%s】\n%s\n%s" % (k, v['content'], v['link']))
+    gfc = lambda contents: ['【%s】\n%s\n%s\n' % (title, v['content'], v['link']) for title, v in contents.items()]
+    raw = read_contents_from_readhub()
+    cts = gfc(raw)
+    for k in cts:
+        print(k)
         print('----------------------------------------')
