@@ -25,9 +25,9 @@ def update_db(interval=15):
 
 
 def get_send_cts(amount=2):
-    cts = db_process.get_contents(10)  # insert contents into database and get addition contents
+    cts = db_process.get_contents(10)  # get contents from database
     fmt_cts = get_formatted_contents(cts)  # formatting contents
-    to_send_cts = get_limited_amount_contents(fmt_cts, amount)  # final contents in a limited amount
+    to_send_cts = random.sample(fmt_cts, amount)  # select final contents in a limited amount randomly
     return to_send_cts
 
 
@@ -49,13 +49,6 @@ def is_sina_link(website):
 def get_formatted_contents(contents):
     return ['【%s】\n%s\n%s\n' % (title, v['content'], v['link'])
             for title, v in contents.items()]
-
-
-def get_limited_amount_contents(contents, amount=None):
-    if amount is None or len(contents) < amount:
-        return contents
-    else:
-        return random.sample(contents, amount)
 
 
 def read_contents_from_readhub():
