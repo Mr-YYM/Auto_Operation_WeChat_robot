@@ -24,6 +24,12 @@ def insert_cts_toDB(contents):
 
 
 def get_contents(amount):
+    """
+    从数据库中获取内容信息。
+
+    :param amount: 内容数量
+    :return: 一定数量的内容
+    """
     info_db = pymysql.connect("localhost", "root", "123456", "info_crbotdb", charset='utf8mb4')
     cursor = info_db.cursor()
     cursor.execute("SELECT time, title, content, link FROM information ORDER BY time DESC limit %d" % amount)
