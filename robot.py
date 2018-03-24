@@ -3,7 +3,10 @@ import wxpy
 import data_getter
 import time
 import logging
+import threading
 from threading import Thread
+
+lock = threading.Lock()
 
 
 def send_contents(contents, member):
@@ -36,21 +39,29 @@ def send_news_to_groups(a_group, interval):
     previous_cts = []
     while 1:
         times += 1
-        print('{line}{group:^16}{line}\n{action:>45}'.format(line='-' * 30, group=a_group.name,
-                                                             action='开始进行第%d轮action' % times))
+        lock.acquire()
+        try:
+            print('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_group.name,
+                                                                 action='☆☆开始进行第%d轮action☆☆' % times))
 
-        if times != 1:
-            previous_cts += ready_to_send_cts
+            if times != 1:
+                previous_cts += ready_to_send_cts
 
-        if len(previous_cts) > 20:
-            previous_cts = []
+            if len(previous_cts) > 60:
+                previous_cts = []
 
-        ready_to_send_cts = data_getter.get_send_cts()
+            ready_to_send_cts = data_getter.get_send_cts()
 
-        to_send_cts = [er for er in ready_to_send_cts if er not in set(previous_cts)]
-        print("☆☆群【%s】刚刚获取了一些信息☆☆\n" % a_group.name)
+            to_send_cts = [er for er in ready_to_send_cts if er not in set(previous_cts)]
+            print("☆☆群【%s】刚刚获取了一些信息☆☆\n" % a_group.name)
 
-        send_contents(to_send_cts, a_group)
+            send_contents(to_send_cts, a_group)
+
+            print('{action:>45}\n{line}{group:^16}{line}\n'.format(line='↑' * 30, group=a_group.name,
+                                                                   action='☆☆第%d轮action完成了☆☆' % times))
+
+        finally:
+            lock.release()
 
         time.sleep(interval * 60)
 
@@ -88,14 +99,14 @@ if __name__ == '__main__':
     def fun(msg):
         if msg.type == wxpy.TEXT:
             if msg.text in join_keys.keys():
-                    if msg.sender not in join_keys[msg.text].members:
-                        print(msg)
-                        try:
-                            join_keys[msg.text].add_members(msg.sender)
-                        except:
-                            msg.sender.send('似乎无法添加进群啊！！！')
-                    elif msg.sender in join_keys[msg.text].members:
-                        return '你已经在群里边了吧'
+                if msg.sender not in join_keys[msg.text].members:
+                    print(msg)
+                    try:
+                        join_keys[msg.text].add_members(msg.sender)
+                    except:
+                        msg.sender.send('似乎无法添加进群啊！！！')
+                elif msg.sender in join_keys[msg.text].members:
+                    return '你已经在群里边了吧'
 
             if msg.text == '关键字':
                 return key_text
@@ -113,17 +124,22 @@ if __name__ == '__main__':
             # 向新的好友发送消息
             new_friend.send('哈哈，我自动接受了你的好友请求')
 
-    # ↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑
 
-    g_info = bot.search('【资讯】广海互联网社群')[0]
-    g_test = bot.search('机器人测试')[0]
-    # me = bot.self
-    print(g_info.name)
+    # ↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑
 
     data_getter.auto_update_db(interval=15)
 
-    t = Thread(target=send_news_to_groups, args=(g_info, 10, ))
-    t.start()
+    if '资讯' in join_keys.keys():
+        g_info = join_keys['资讯']
+        t = Thread(target=send_news_to_groups, args=(g_info, 15,))
+        t.start()
 
-    t2 = Thread(target=send_news_to_groups, args=(g_test, 1, ))
+    if '可聊' in join_keys.keys():
+        g_chat = join_keys['可聊']
+        t3 = Thread(target=send_news_to_groups, args=(g_chat, 300,))
+        t3.start()
+
+    g_test = bot.search('机器人测试')[0]
+
+    t2 = Thread(target=send_news_to_groups, args=(g_test, 1,))
     t2.start()
