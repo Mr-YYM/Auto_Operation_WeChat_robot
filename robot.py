@@ -112,13 +112,19 @@ if __name__ == '__main__':
     # ------->机器人关键字识别，待进一步实现完善，重构！<--------
     @bot.register(wxpy.Friend)
     def auto_invite(msg):
+        """
+        识别关键字，自动邀请好友进群
+
+        """
         # sender：好友对象
         sender = msg.sender
+
         if msg.type == wxpy.TEXT:
             text = msg.text
             if text in join_keys.keys():
                 group = join_keys[text]
                 members = group.members  # 群所有成员的集合
+
                 if sender not in members:
                     print(msg)
                     add_member_to_group(group, sender)
@@ -158,19 +164,19 @@ if __name__ == '__main__':
     # ↑↑↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑↑↑
 
     # ↓↓↓↓↓↓------->当时（15min）爬取网站，自动更新数据库<--------↓↓↓↓↓↓
-    data_getter.auto_update_db(interval=15)
+    data_getter.auto_update_db(interval=60)
 
     # ↓↓↓↓↓↓------->创建和启动发送新闻的线程--------↓↓↓↓↓↓
-    # if '资讯' in join_keys.keys():
-    #     g_info = join_keys['资讯']
-    #     t = Thread(target=send_news_to_chat, args=(g_info, 15,))
-    #     t.start()
-    #
-    # if '可聊' in join_keys.keys():
-    #     g_chat = join_keys['可聊']
-    #     t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
-    #     t3.start()
-    #
+    if '资讯' in join_keys.keys():
+        g_info = join_keys['资讯']
+        t = Thread(target=send_news_to_chat, args=(g_info, 60,))
+        t.start()
+
+    if '可聊' in join_keys.keys():
+        g_chat = join_keys['可聊']
+        t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
+        t3.start()
+
     # g_test = bot.search('机器人测试')[0]
     #
     # t2 = Thread(target=send_news_to_chat, args=(g_test, 5,))
