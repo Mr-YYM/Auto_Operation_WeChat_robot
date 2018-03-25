@@ -90,7 +90,7 @@ if __name__ == '__main__':
 【资讯】广海互联网社群：资讯
 '''
     # 扫码登录机器人，并获取所有可识别群组
-    bot = wxpy.Bot(cache_path=True)
+    bot = wxpy.Bot(cache_path=True, console_qr=1)
     groups = bot.groups()
 
     # 获取所有广海群
@@ -146,19 +146,19 @@ if __name__ == '__main__':
     data_getter.auto_update_db(interval=15)
 
     # ↓↓↓↓↓↓------->创建和启动发送新闻的线程--------↓↓↓↓↓↓
-    if '资讯' in join_keys.keys():
-        g_info = join_keys['资讯']
-        t = Thread(target=send_news_to_chat, args=(g_info, 15,))
-        t.start()
-
-    if '可聊' in join_keys.keys():
-        g_chat = join_keys['可聊']
-        t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
-        t3.start()
-
-    g_test = bot.search('机器人测试')[0]
-
-    t2 = Thread(target=send_news_to_chat, args=(g_test, 1,))
-    t2.start()
+    # if '资讯' in join_keys.keys():
+    #     g_info = join_keys['资讯']
+    #     t = Thread(target=send_news_to_chat, args=(g_info, 15,))
+    #     t.start()
+    #
+    # if '可聊' in join_keys.keys():
+    #     g_chat = join_keys['可聊']
+    #     t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
+    #     t3.start()
+    #
+    # g_test = bot.search('机器人测试')[0]
+    #
+    # t2 = Thread(target=send_news_to_chat, args=(g_test, 5,))
+    # t2.start()
 
     # ↑↑↑↑↑↑------->创建和启动发送新闻的线程<--------↑↑↑↑↑↑
