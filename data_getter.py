@@ -68,7 +68,7 @@ def is_sina_link(website):
 
 # 对内容进行格式化处理
 def get_formatted_contents(contents):
-    return ['【%s】\n%s\n%s\n' % (title, v['content'], v['link'])
+    return ['【{t:s}】\n{content:s}\n{link:s}\n'.format(t=title, content=v['content'], link=v['link'])
             for title, v in contents.items()]
 
 
@@ -111,7 +111,8 @@ def read_contents_from_readhub():
 
 
 if __name__ == '__main__':
-    gfc = lambda contents: ['【%s】\n%s\n%s\n' % (title, v['content'], v['link']) for title, v in contents.items()]
+    gfc = lambda contents: ['【{t:s}】\n{content:s}\n{link:s}\n'.format(t=title, content=v['content'], link=v['link'])
+                            for title, v in contents.items()]
     raw = read_contents_from_readhub()
     cts = gfc(raw)
     for k in cts:

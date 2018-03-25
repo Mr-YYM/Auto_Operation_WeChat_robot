@@ -118,7 +118,8 @@ if __name__ == '__main__':
                     print(msg)
                     try:
                         join_keys[msg.text].add_members(msg.sender)
-                    except:
+                    except Exception as exp:
+                        print(exp)
                         msg.sender.send('似乎无法添加进群啊！！！')
                 elif msg.sender in join_keys[msg.text].members:
                     return '你已经在群里边了吧'
