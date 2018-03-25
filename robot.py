@@ -129,8 +129,7 @@ if __name__ == '__main__':
                         try:
                             join_keys[msg.text].add_members(msg.sender)
                         except Exception as exp:
-                            print(exp)
-                            msg.sender.send('似乎无法添加进群啊！！！')
+                            msg.sender.send('似乎无法添加进群啊！！！' + str(exp))
 
             if msg.text == '关键字':
                 return key_text
