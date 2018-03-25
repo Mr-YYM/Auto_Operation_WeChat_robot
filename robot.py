@@ -112,27 +112,34 @@ if __name__ == '__main__':
     # ------->机器人关键字识别，待进一步实现完善，重构！<--------
     @bot.register(wxpy.Friend)
     def auto_invite(msg):
+        # sender：好友对象
+        sender = msg.sender
         if msg.type == wxpy.TEXT:
-            if msg.text in join_keys.keys():
-                if msg.sender not in join_keys[msg.text].members:
+            text = msg.text
+            if text in join_keys.keys():
+                group = join_keys[text]
+                members = group.members  # 群所有成员的集合
+                if sender not in members:
                     print(msg)
-                    try:
-                        join_keys[msg.text].add_members(msg.sender)
-                    except Exception as exp:
-                        print(exp)
-                        msg.sender.send('似乎无法添加进群啊！！！')
-                elif msg.sender in join_keys[msg.text].members:
-                    join_keys[msg.text].update_group()
-                    if msg.sender in join_keys[msg.text].members:
+                    add_member_to_group(group, sender)
+                else:
+                    # 更新群成员列表
+                    group.update_group()
+                    if sender in group.members:
                         return '你已经在群里边了吧'
                     else:
-                        try:
-                            join_keys[msg.text].add_members(msg.sender)
-                        except Exception as exp:
-                            msg.sender.send('似乎无法添加进群啊！！！' + str(exp))
+                        add_member_to_group(group, sender)
 
             if msg.text == '关键字':
                 return key_text
+
+    # 添加好友进群
+    def add_member_to_group(group, sender):
+        try:
+            group.add_members(sender)
+        except Exception as exp:
+            print(exp)
+            sender.send('似乎无法添加进群啊！！！')
 
 
     # 注册好友请求类消息
