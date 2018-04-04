@@ -172,18 +172,18 @@ if __name__ == '__main__':
     # ↑↑↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑↑↑
 
     # ↓↓↓↓↓↓------->当时（15min）爬取网站，自动更新数据库<--------↓↓↓↓↓↓
-    data_getter.auto_update_db(interval=60)
+    # data_getter.auto_update_db(interval=60)
 
     # ↓↓↓↓↓↓------->创建和启动发送新闻的线程--------↓↓↓↓↓↓
-    if '资讯' in join_keys.keys():
-        g_info = join_keys['资讯']
-        t = Thread(target=send_news_to_chat, args=(g_info, 60,))
-        t.start()
-
-    if '可聊' in join_keys.keys():
-        g_chat = join_keys['可聊']
-        t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
-        t3.start()
+    # if '资讯' in join_keys.keys():
+    #     g_info = join_keys['资讯']
+    #     t = Thread(target=send_news_to_chat, args=(g_info, 60,))
+    #     t.start()
+    #
+    # if '可聊' in join_keys.keys():
+    #     g_chat = join_keys['可聊']
+    #     t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
+    #     t3.start()
 
     # g_test = bot.search('机器人测试')[0]
     #
