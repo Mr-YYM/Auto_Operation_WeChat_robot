@@ -78,6 +78,12 @@ def send_news_to_chat(a_chat, interval):
         time.sleep(interval * 60)
 
 
+def fun():
+    while True:
+        print("Running")
+        time.sleep(60)
+
+
 if __name__ == '__main__':
     other_group_keys = """广海小米校园俱乐部:mifan
     机器人测试:test"""
@@ -168,7 +174,8 @@ if __name__ == '__main__':
             # 向新的好友发送消息
             new_friend.send('哈哈，我自动接受了你的好友请求')
 
-    wxpy.embed()
+    embed = Thread(target=fun)
+    embed.start()
 
 
     # ↑↑↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑↑↑
