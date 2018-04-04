@@ -79,6 +79,8 @@ def send_news_to_chat(a_chat, interval):
 
 
 if __name__ == '__main__':
+    other_group_keys = """广海小米校园俱乐部:mifan
+    机器人测试:test"""
     key_text = '''【产品】广海互联网细分群：产品
 【设计】广海互联网细分群：设计
 【运营】广海互联网细分群：运营
@@ -105,6 +107,12 @@ if __name__ == '__main__':
         r = re.search(key_mt, eg.name)
         if r is not None:
             join_keys[r.group()[1:-1]] = eg
+
+    for ek in other_group_keys.split('\n'):
+        g_name_key = ek.split(':')
+        g = bot.search(g_name_key[0])
+        if g:
+            join_keys[g_name_key[1]] = g[0]
 
     print(join_keys)
     # ↑↑↑↑↑↑------->提取入群关键字<--------↑↑↑↑↑↑
