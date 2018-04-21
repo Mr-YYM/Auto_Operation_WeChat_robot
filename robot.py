@@ -97,6 +97,7 @@ if __name__ == '__main__':
 5.互联网游戏策划群……发送"游戏"
 6.互联网日常福利群……发送"福利"
 7.互联网编程技术群……发送"技术"
+            发送PHP、Python、JAVA、C++、安卓、前端进入各技术细分群！
 8.互联网平面设计群……发送"设计"
 9.互联网产品运营群……发送"产品"
 10.互联网新媒体运营群……发送"新媒体"
@@ -119,7 +120,7 @@ if __name__ == '__main__':
     for eg in guanghai_groups:
         r = re.search(key_mt, eg.name)
         if r is not None:
-            join_keys[r.group()[1:-1]] = eg
+            join_keys[r.group()[1:-1].lower()] = eg
 
     for ek in other_group_keys.split('\n'):
         g_name_key = ek.split(':')
@@ -141,7 +142,7 @@ if __name__ == '__main__':
         sender = msg.sender
 
         if msg.type == wxpy.TEXT:
-            text = msg.text
+            text = msg.text.lower()
             if text in join_keys.keys():
                 group = join_keys[text]
                 members = group.members  # 群所有成员的集合
