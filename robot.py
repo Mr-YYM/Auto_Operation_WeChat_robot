@@ -1,4 +1,5 @@
 import re
+import warnings
 import wxpy
 # import data_getter
 import time
@@ -7,6 +8,7 @@ import threading
 from threading import Thread
 
 lock = threading.Lock()
+warnings.filterwarnings('ignore')
 
 
 def send_contents(contents, chat):
