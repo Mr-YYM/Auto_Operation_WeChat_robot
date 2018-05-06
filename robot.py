@@ -1,7 +1,7 @@
 import re
 import warnings
 import wxpy
-import data_getter
+# import data_getter
 import time
 import logging
 import threading
@@ -80,16 +80,31 @@ def send_news_to_chat(a_chat, interval):
         time.sleep(interval * 60)
 
 
+def fun():
+    times = 0
+    while True:
+        print("Running")
+        time.sleep(1800)
+        times += 0.5
+        print('安全运行%d小时了' % times)
+
+
 if __name__ == '__main__':
-    key_text = '''【产品】广海互联网细分群：产品
-【设计】广海互联网细分群：设计
-【运营】广海互联网细分群：运营
-【技术】广海互联网细分群：技术
-【市场】广海互联网细分群：市场
-【区块链】广海互联网主题群：区块链
-【福利】广海互联网社群：福利
-【游戏】广海互联网社群：游戏
-【资讯】广海互联网社群：资讯
+    other_group_keys = """广海小米校园俱乐部:mifan
+广海互联网社群(8):闲聊"""  # 自定义群关键字
+    key_text = '''1.互联网人工智能群……发送"AI"
+2.互联网区块链群……发送"区块链"
+3.互联网电子商务群……发送"电商"
+4.互联网读书兴趣群……发送"读书"
+5.互联网游戏策划群……发送"游戏"
+6.互联网日常福利群……发送"福利"
+7.互联网编程技术群……发送"技术"
+8.互联网平面设计群……发送"设计"
+9.互联网产品运营群……发送"产品"
+10.互联网新媒体运营群……发送"新媒体"
+11.互联网市场营销群……发送"市场"
+12.广海小米俱乐部……发送"mifan"
+13.广海互联网闲聊群……发送"闲聊"
 '''
     # 扫码登录机器人，并获取所有可识别群组
     bot = wxpy.Bot(cache_path=True, console_qr=1)
@@ -107,6 +122,12 @@ if __name__ == '__main__':
         r = re.search(key_mt, eg.name)
         if r is not None:
             join_keys[r.group()[1:-1]] = eg
+
+    for ek in other_group_keys.split('\n'):
+        g_name_key = ek.split(':')
+        g = bot.search(g_name_key[0])
+        if g:
+            join_keys[g_name_key[1]] = g[0]
 
     print(join_keys)
     # ↑↑↑↑↑↑------->提取入群关键字<--------↑↑↑↑↑↑
@@ -130,15 +151,21 @@ if __name__ == '__main__':
                 if sender not in members:
                     print(msg)
                     add_member_to_group(group, sender)
+                    print('邀请了' + msg.sender.name)
+                    time.sleep(0.5)
+                    return '【机器人】已经拉你进群或发送邀请，请确认！'
                 else:
                     # 更新群成员列表
                     group.update_group()
                     if sender in group.members:
-                        return '你已经在群里边了吧'
+                        return '【机器人】你已经在群里边了吧'
                     else:
                         add_member_to_group(group, sender)
+                        print('邀请了' + msg.sender.name)
+                        time.sleep(0.5)
+                        return '【机器人】已经拉你进群或发送邀请，请确认！'
 
-            if msg.text == '关键字':
+            if msg.text == '进群':
                 return key_text
 
     # 添加好友进群
@@ -162,22 +189,25 @@ if __name__ == '__main__':
             # 向新的好友发送消息
             new_friend.send('哈哈，我自动接受了你的好友请求')
 
+    embed = Thread(target=fun)
+    embed.start()
+
 
     # ↑↑↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑↑↑
 
     # ↓↓↓↓↓↓------->当时（15min）爬取网站，自动更新数据库<--------↓↓↓↓↓↓
-    data_getter.auto_update_db(interval=60)
+    # data_getter.auto_update_db(interval=60)
 
     # ↓↓↓↓↓↓------->创建和启动发送新闻的线程--------↓↓↓↓↓↓
-    if '资讯' in join_keys.keys():
-        g_info = join_keys['资讯']
-        t = Thread(target=send_news_to_chat, args=(g_info, 60,))
-        t.start()
-
-    if '可聊' in join_keys.keys():
-        g_chat = join_keys['可聊']
-        t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
-        t3.start()
+    # if '资讯' in join_keys.keys():
+    #     g_info = join_keys['资讯']
+    #     t = Thread(target=send_news_to_chat, args=(g_info, 60,))
+    #     t.start()
+    #
+    # if '可聊' in join_keys.keys():
+    #     g_chat = join_keys['可聊']
+    #     t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
+    #     t3.start()
 
     # g_test = bot.search('机器人测试')[0]
     #
