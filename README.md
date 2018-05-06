@@ -78,6 +78,13 @@ CREATE TABLE information
   ENGINE = InnoDB;
 ```
 
+如果遇到数据库报错：
+Incorrect string value: '...' for column 'title' at row 1
+执行以下sql命令解决：
+```sql
+alter table information convert to character set utf8mb4 collate utf8mb4_bin
+```
+
 ## wxpy模块的用法
 使用wxpy模块可实现操作。
 为了能够正常获得群对象，需要登录前保证在群说一句话，把群冒上来。谨记！！！
