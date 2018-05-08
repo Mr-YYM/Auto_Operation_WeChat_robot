@@ -48,7 +48,7 @@ def send_news_to_chat(a_chat, interval):
                 print('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
                                                                     action='☆☆开始进行第%d轮的早报推送☆☆' % times))
 
-                to_send_cts = data_getter.get_send_cts(12)
+                to_send_cts = '校友会早间新闻：\n' + data_getter.get_send_cts(12)
 
                 print("☆☆已经为群【%s】获取了早报信息☆☆\n" % a_chat.name)
 
