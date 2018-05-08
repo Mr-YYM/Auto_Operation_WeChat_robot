@@ -1,7 +1,8 @@
+import datetime
 import re
 import warnings
 import wxpy
-# import data_getter
+import data_getter
 import time
 import logging
 import threading
@@ -11,35 +12,24 @@ lock = threading.Lock()
 warnings.filterwarnings('ignore')
 
 
-def send_contents(contents, chat):
+def is_time(hour, minute):
+    return datetime.time(hour, minute).hour == datetime.datetime.now().time().hour
+
+
+def send_contents(content, chat):
     """
     发送内容信息到指定的chat(聊天对象，群聊或者好友)
 
-    :param contents:内容信息
+    :param content:内容信息
     :param chat:聊天对象，群聊（wxpy.Group）或者好友(wxpy.Friend)
     """
-    if contents:
-        print('有这么一些需要发送：\n')
-        show_cts = '--------------------------------------------------------------\n'.join(contents)
-        print(show_cts)
-
-        for k, v in enumerate(contents):
-            try:
-                chat.send(v)
-                logging.error('【{name}】已经发送了第{count}个'.format(name=chat.name, count=k + 1))
-            except wxpy.ResponseError as exp:
-                if exp.err_code == 1100 or 1101 or 1102:
-                    print('☆☆账号异常退出，请重新登录☆☆')
-                else:
-                    print('发生了一些错误：', exp)
-
-                break
-
-            if k + 1 == len(contents):
-                break
-            time.sleep(60)
-    else:
-        print('【%s】nothing' % chat.name)
+    try:
+        chat.send(content)
+    except wxpy.ResponseError as exp:
+        if exp.err_code == 1100 or 1101 or 1102:
+            print('☆☆账号异常退出，请重新登录☆☆')
+        else:
+            print('发生了一些错误：', exp)
 
 
 def send_news_to_chat(a_chat, interval):
@@ -50,29 +40,22 @@ def send_news_to_chat(a_chat, interval):
     :param interval: 时间间隔
     """
     times = 0
-    previous_cts = []
     while 1:
         times += 1
         lock.acquire()
         try:
             print('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
-                                                                 action='☆☆开始进行第%d轮action☆☆' % times))
+                                                                 action='☆☆开始进行第%d轮的早报推送☆☆' % times))
 
-            if times != 1:
-                previous_cts += ready_to_send_cts
+            to_send_cts = data_getter.get_send_cts(12)
 
-            if len(previous_cts) > 60:
-                previous_cts = []
+            print("☆☆已经为群【%s】获取了早报信息☆☆\n" % a_chat.name)
 
-            ready_to_send_cts = data_getter.get_send_cts()
-
-            to_send_cts = [er for er in ready_to_send_cts if er not in set(previous_cts)]
-            print("☆☆群【%s】刚刚获取了一些信息☆☆\n" % a_chat.name)
-
-            send_contents(to_send_cts, a_chat)
+            if is_time(7, 0):
+                send_contents(to_send_cts, a_chat)
 
             print('{action:>45}\n{line}{group:^16}{line}\n'.format(line='↑' * 30, group=a_chat.name,
-                                                                   action='☆☆第%d轮action完成了☆☆' % times))
+                                                                   action='☆☆第%d轮的早报推送完成了☆☆' % times))
 
         finally:
             lock.release()
@@ -80,35 +63,60 @@ def send_news_to_chat(a_chat, interval):
         time.sleep(interval * 60)
 
 
-def fun():
-    times = 0
-    while True:
-        print("Running")
-        time.sleep(1800)
-        times += 0.5
-        print('安全运行%d小时了' % times)
-
-
 if __name__ == '__main__':
-    other_group_keys = """广海小米校园俱乐部:mifan
-广海互联网社群(8):闲聊"""  # 自定义群关键字
-    key_text = '''1.互联网人工智能群……发送"AI"
-2.互联网区块链群……发送"区块链"
-3.互联网电子商务群……发送"电商"
-4.互联网读书兴趣群……发送"读书"
-5.互联网游戏策划群……发送"游戏"
-6.互联网日常福利群……发送"福利"
-7.互联网编程技术群……发送"技术"
-            发送PHP、Python、JAVA、C++、安卓、前端进入各技术细分群！
-8.互联网平面设计群……发送"设计"
-9.互联网产品运营群……发送"产品"
-10.互联网新媒体运营群……发送"新媒体"
-11.互联网市场营销群……发送"市场"
-12.广海小米俱乐部……发送"mifan"
-13.广海互联网闲聊群……发送"闲聊"
+    key_text = '''【读书】广海互联网社群
+    KW：读书
+【游戏】广海互联网社群
+    KW：游戏
+【福利】广海互联网社群
+    KW：福利
+【比赛】广海互联网社群
+    KW：比赛
+【共创】广海共创者社群
+    KW：共创
+【区块链】广海互联网社群
+    KW：区块链
+【小程序】广海互联网社群
+    KW：小程序
+【电商】广海互联网社群
+    KW：电商
+【AI】广海互联网社群
+    KW：AI
+【新媒体】广海互联网社群
+    KW：新媒体
+【市场】广海互联网社群
+    KW：市场
+【资讯】广海互联网社群
+    KW：资讯
+【H5】广海互联网社群
+    KW：H5
+【设计】广海互联网社群
+    KW：设计
+
+【小米】广海小米俱乐部
+    KW：小米
+
+【前端】广海互联网社群
+    KW：前端
+【JAVA】广海互联网社群
+    KW：JAV
+【PHP】广海互联网社群
+    KW：PHP
+【算法】广海互联网社群
+    KW：算法
+【C++】广海互联网社群
+    KW：C++
+【安卓】广海互联网社群
+    KW：安卓
+【python】广海互联网社群
+    KW：python
+【产品】广海互联网社群
+    KW：产品
+【技术】广海互联网社群
+    KW：技术
 '''
     # 扫码登录机器人，并获取所有可识别群组
-    bot = wxpy.Bot(cache_path=True, console_qr=1)
+    bot = wxpy.Bot(cache_path=True, console_qr=2)
     groups = bot.groups()
 
     # 获取所有广海群
@@ -124,13 +132,9 @@ if __name__ == '__main__':
         if r is not None:
             join_keys[r.group()[1:-1].lower()] = eg
 
-    for ek in other_group_keys.split('\n'):
-        g_name_key = ek.split(':')
-        g = bot.search(g_name_key[0])
-        if g:
-            join_keys[g_name_key[1]] = g[0]
-
     print(join_keys)
+
+
     # ↑↑↑↑↑↑------->提取入群关键字<--------↑↑↑↑↑↑
 
     # ------->机器人关键字识别，待进一步实现完善，重构！<--------
@@ -169,6 +173,7 @@ if __name__ == '__main__':
             if msg.text == '进群':
                 return key_text
 
+
     # 添加好友进群
     def add_member_to_group(group, sender):
         try:
@@ -190,14 +195,11 @@ if __name__ == '__main__':
             # 向新的好友发送消息
             new_friend.send('哈哈，我自动接受了你的好友请求')
 
-    embed = Thread(target=fun)
-    embed.start()
-
 
     # ↑↑↑↑↑↑------->机器人关键字识别，待进一步实现完善，重构！<--------↑↑↑↑↑↑
 
-    # ↓↓↓↓↓↓------->当时（15min）爬取网站，自动更新数据库<--------↓↓↓↓↓↓
-    # data_getter.auto_update_db(interval=60)
+    # ↓↓↓↓↓↓------->定时（60min）爬取网站，自动更新数据库<--------↓↓↓↓↓↓
+    data_getter.auto_update_db(interval=60)
 
     # ↓↓↓↓↓↓------->创建和启动发送新闻的线程--------↓↓↓↓↓↓
     # if '资讯' in join_keys.keys():
@@ -210,9 +212,31 @@ if __name__ == '__main__':
     #     t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
     #     t3.start()
 
-    # g_test = bot.search('机器人测试')[0]
-    #
-    # t2 = Thread(target=send_news_to_chat, args=(g_test, 5,))
-    # t2.start()
+    g_xiaoyou = bot.search('NO.2深圳市广东海洋大学校友会')
+    if g_xiaoyou:
+        g_xiaoyou = g_xiaoyou[0]
+    else:
+        print('没找到校友群')
+
+    g_xiaoyou1 = bot.search('NO.3深圳市广东海洋大学校友会')
+    if g_xiaoyou:
+        g_xiaoyou1 = g_xiaoyou1[0]
+    else:
+        print('没找到校友群1')
+
+    g_test = bot.search('机器人测试')
+    if g_xiaoyou:
+        g_xiaoyou1 = g_xiaoyou1[0]
+    else:
+        print('没找到机器人测试')
+
+    t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou, 30,))
+    t2.start()
+
+    t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou1, 30,))
+    t3.start()
+
+    t4 = Thread(target=send_news_to_chat, args=(g_test, 30,))
+    t4.start()
 
     # ↑↑↑↑↑↑------->创建和启动发送新闻的线程<--------↑↑↑↑↑↑

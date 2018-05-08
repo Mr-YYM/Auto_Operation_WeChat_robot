@@ -43,9 +43,11 @@ def get_send_cts(amount=2):
     :param amount: 内容数量
     :return: 最终内容
     """
-    cts = db_process.get_contents(10)  # get contents from database
+    cts = db_process.get_contents(amount)  # get contents from database
     fmt_cts = get_formatted_contents(cts)  # formatting contents
-    to_send_cts = random.sample(fmt_cts, amount)  # select final contents in a limited amount randomly
+    to_send_cts = ''
+    for k, v in enumerate(fmt_cts):
+        to_send_cts += "%d、%s" % (k + 1, v)
     return to_send_cts
 
 
@@ -68,7 +70,7 @@ def is_sina_link(website):
 
 # 对内容进行格式化处理
 def get_formatted_contents(contents):
-    return ['【{t:s}】\n{content:s}\n{link:s}\n'.format(t=title, content=v['content'], link=v['link'])
+    return ['{t:s}\n'.format(t=title)
             for title, v in contents.items()]
 
 
