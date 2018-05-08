@@ -116,7 +116,7 @@ if __name__ == '__main__':
     KW：技术
 '''
     # 扫码登录机器人，并获取所有可识别群组
-    bot = wxpy.Bot(cache_path=True, console_qr=2)
+    bot = wxpy.Bot(cache_path=True, console_qr=1)
     groups = bot.groups()
 
     # 获取所有广海群
