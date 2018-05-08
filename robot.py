@@ -44,17 +44,17 @@ def send_news_to_chat(a_chat, interval):
         times += 1
         lock.acquire()
         try:
-            print('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
-                                                                 action='☆☆开始进行第%d轮的早报推送☆☆' % times))
-
-            to_send_cts = data_getter.get_send_cts(12)
-
-            print("☆☆已经为群【%s】获取了早报信息☆☆\n" % a_chat.name)
-
             if is_time(7, 0):
+                print('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
+                                                                    action='☆☆开始进行第%d轮的早报推送☆☆' % times))
+
+                to_send_cts = data_getter.get_send_cts(12)
+
+                print("☆☆已经为群【%s】获取了早报信息☆☆\n" % a_chat.name)
+
                 send_contents(to_send_cts, a_chat)
 
-            print('{action:>45}\n{line}{group:^16}{line}\n'.format(line='↑' * 30, group=a_chat.name,
+                print('{action:>45}\n{line}{group:^16}{line}\n'.format(line='↑' * 30, group=a_chat.name,
                                                                    action='☆☆第%d轮的早报推送完成了☆☆' % times))
 
         finally:
@@ -212,31 +212,31 @@ if __name__ == '__main__':
     #     t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
     #     t3.start()
 
-    g_xiaoyou = bot.search('NO.2深圳市广东海洋大学校友会')
+    g_xiaoyou = bot.search('NO.2【深圳市广东海洋大学校友会】')
     if g_xiaoyou:
         g_xiaoyou = g_xiaoyou[0]
+
+        t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou, 30,))
+        t2.start()
     else:
         print('没找到校友群')
 
-    g_xiaoyou1 = bot.search('NO.3深圳市广东海洋大学校友会')
+    g_xiaoyou1 = bot.search('NO.3【深圳市广东海洋大学校友会】')
     if g_xiaoyou:
         g_xiaoyou1 = g_xiaoyou1[0]
+
+        t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou1, 30,))
+        t3.start()
     else:
         print('没找到校友群1')
 
     g_test = bot.search('机器人测试')
     if g_xiaoyou:
         g_xiaoyou1 = g_xiaoyou1[0]
+        t4 = Thread(target=send_news_to_chat, args=(g_test, 30,))
+        t4.start()
     else:
         print('没找到机器人测试')
 
-    t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou, 30,))
-    t2.start()
-
-    t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou1, 30,))
-    t3.start()
-
-    t4 = Thread(target=send_news_to_chat, args=(g_test, 30,))
-    t4.start()
 
     # ↑↑↑↑↑↑------->创建和启动发送新闻的线程<--------↑↑↑↑↑↑
