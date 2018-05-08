@@ -155,20 +155,20 @@ if __name__ == '__main__':
 
                 if sender not in members:
                     print(msg)
-                    add_member_to_group(group, sender)
-                    print('邀请了' + msg.sender.name)
-                    time.sleep(0.5)
-                    return '【机器人】已经拉你进群或发送邀请，请确认！'
+                    if add_member_to_group(group, sender):
+                        print('邀请了' + msg.sender.name)
+                        time.sleep(0.5)
+                        return '【机器人】已经拉你进群或发送邀请，请确认！'
                 else:
                     # 更新群成员列表
                     group.update_group()
                     if sender in group.members:
                         return '【机器人】你已经在群里边了吧'
                     else:
-                        add_member_to_group(group, sender)
-                        print('邀请了' + msg.sender.name)
-                        time.sleep(0.5)
-                        return '【机器人】已经拉你进群或发送邀请，请确认！'
+                        if add_member_to_group(group, sender):
+                            print('邀请了' + msg.sender.name)
+                            time.sleep(0.5)
+                            return '【机器人】已经拉你进群或发送邀请，请确认！'
 
             if msg.text == '进群':
                 return key_text
@@ -178,9 +178,11 @@ if __name__ == '__main__':
     def add_member_to_group(group, sender):
         try:
             group.add_members(sender)
+            return True
         except Exception as exp:
             print(exp)
             sender.send('似乎无法添加进群啊！！！')
+            return False
 
 
     # 注册好友请求类消息
