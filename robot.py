@@ -206,33 +206,31 @@ if __name__ == '__main__':
     #     g_info = join_keys['资讯']
     #     t = Thread(target=send_news_to_chat, args=(g_info, 60,))
     #     t.start()
-    #
-    # if '可聊' in join_keys.keys():
-    #     g_chat = join_keys['可聊']
-    #     t3 = Thread(target=send_news_to_chat, args=(g_chat, 300,))
-    #     t3.start()
 
-    g_xiaoyou = bot.search('NO.2【深圳市广东海洋大学校友会】')
+    g_xiaoyou2 = bot.search('NO.2【深圳市广东海洋大学校友会】')
     if g_xiaoyou:
         g_xiaoyou = g_xiaoyou[0]
 
+        print('找到了No.2校友群')
         t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou, 30,))
         t2.start()
     else:
         print('没找到校友群')
 
-    g_xiaoyou1 = bot.search('NO.3【深圳市广东海洋大学校友会】')
-    if g_xiaoyou:
-        g_xiaoyou1 = g_xiaoyou1[0]
+    g_xiaoyou3 = bot.search('NO.3深圳市广东海洋大学校友会')
+    if g_xiaoyou3:
+        g_xiaoyou3 = g_xiaoyou3[0]
 
-        t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou1, 30,))
+        print('找到了No.3校友群')
+        t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou3, 30,))
         t3.start()
     else:
         print('没找到校友群1')
 
     g_test = bot.search('机器人测试')
-    if g_xiaoyou:
-        g_xiaoyou1 = g_xiaoyou1[0]
+    if g_test:
+        g_test = g_test[0]
+        print('找到了机器人测试')
         t4 = Thread(target=send_news_to_chat, args=(g_test, 30,))
         t4.start()
     else:
