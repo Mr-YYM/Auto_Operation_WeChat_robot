@@ -208,14 +208,14 @@ if __name__ == '__main__':
     #     t.start()
 
     g_xiaoyou2 = bot.search('NO.2【深圳市广东海洋大学校友会】')
-    if g_xiaoyou:
-        g_xiaoyou = g_xiaoyou[0]
+    if g_xiaoyou2:
+        g_xiaoyou2 = g_xiaoyou2[0]
 
         print('找到了No.2校友群')
-        t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou, 30,))
+        t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou2, 30,))
         t2.start()
     else:
-        print('没找到校友群')
+        print('没找到No.2校友群')
 
     g_xiaoyou3 = bot.search('NO.3深圳市广东海洋大学校友会')
     if g_xiaoyou3:
@@ -225,7 +225,7 @@ if __name__ == '__main__':
         t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou3, 30,))
         t3.start()
     else:
-        print('没找到校友群1')
+        print('没找到No.3校友群')
 
     g_test = bot.search('机器人测试')
     if g_test:
