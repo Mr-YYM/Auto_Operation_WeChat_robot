@@ -118,4 +118,4 @@ if __name__ == '__main__':
     for k in cts:
         print(k)
         print('----------------------------------------')
-    update_db()
+    auto_update_db()
