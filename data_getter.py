@@ -12,7 +12,7 @@ from threading import Thread
 warnings.filterwarnings('ignore')
 
 
-def auto_update_db(interval):
+def auto_update_db(interval=15):
     """
     自动更新数据库
 
