@@ -46,7 +46,7 @@ def send_news_to_chat(a_chat):
             if is_time(7, 0):
                 times += 1
                 logging.info('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
-                                                                     action='☆☆开始进行第%d轮的早报推送☆☆' % times))
+                                                                            action='☆☆开始进行第%d轮的早报推送☆☆' % times))
 
                 to_send_cts = '校友会早间新闻：\n' + data_getter.get_send_cts(12)
 
@@ -55,7 +55,7 @@ def send_news_to_chat(a_chat):
                 send_contents(to_send_cts, a_chat)
 
                 logging.info('{action:>45}\n{line}{group:^16}{line}\n'.format(line='↑' * 30, group=a_chat.name,
-                                                                       action='☆☆第%d轮的早报推送完成了☆☆' % times))
+                                                                              action='☆☆第%d轮的早报推送完成了☆☆' % times))
 
         finally:
             lock.release()
@@ -66,6 +66,7 @@ def send_news_to_chat(a_chat):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("wxpy").setLevel(logging.WARNING)
 
     key_text = '''【读书】广海互联网社群
     KW：读书
