@@ -65,6 +65,7 @@ def send_news_to_chat(a_chat):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
+    logging.getLogger("requests").setLevel(logging.WARNING)
 
     key_text = '''【读书】广海互联网社群
     KW：读书
