@@ -13,8 +13,8 @@ warnings.filterwarnings('ignore')
 
 
 def is_time(hour, minute):
-    now = datetime.datetime.now().time()
-    return now.hour == hour and now.minute == minute
+    current_time = datetime.datetime.now().time()
+    return current_time.hour == hour and current_time.minute == minute
 
 
 def send_contents(content, chat):
@@ -143,6 +143,8 @@ if __name__ == '__main__':
         识别关键字，自动邀请好友进群
 
         """
+        request_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')  # 获取请求发出的时间（'20XX-XX-XX XX:XX'）
+
         # sender：好友对象
         sender = msg.sender
 
@@ -155,21 +157,23 @@ if __name__ == '__main__':
                 if sender not in members:
                     print(msg)
                     if add_member_to_group(group, sender):
-                        print('邀请了' + msg.sender.name)
+                        print('%s 邀请了%s进群【%s】' % (request_time, msg.sender.name, group.name))
                         time.sleep(0.5)
                         return '【机器人】已经拉你进群或发送邀请，请确认！'
                 else:
                     # 更新群成员列表
                     group.update_group()
                     if sender in group.members:
+                        print('%s 尝试邀请%s进群【%s】但Ta已经在群里了' % (request_time, msg.sender.name, group.name))
                         return '【机器人】你已经在群里边了吧'
                     else:
                         if add_member_to_group(group, sender):
-                            print('邀请了' + msg.sender.name)
+                            print('%s 邀请了%s进群【%s】' % (request_time, msg.sender.name, group.name))
                             time.sleep(0.5)
                             return '【机器人】已经拉你进群或发送邀请，请确认！'
 
             if msg.text == '进群':
+                print('%s %s发送了‘进群’指令' % (request_time, msg.sender.name))
                 return key_text
 
 
