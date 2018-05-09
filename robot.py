@@ -64,6 +64,8 @@ def send_news_to_chat(a_chat):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+
     key_text = '''【读书】广海互联网社群
     KW：读书
 【游戏】广海互联网社群
@@ -132,7 +134,7 @@ if __name__ == '__main__':
         if r is not None:
             join_keys[r.group()[1:-1].lower()] = eg
 
-    for ek in join_keys:
+    for ek in join_keys.items():
         print(ek)
 
     # ↑↑↑↑↑↑------->提取入群关键字<--------↑↑↑↑↑↑
