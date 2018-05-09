@@ -68,6 +68,11 @@ if __name__ == '__main__':
     logging.getLogger("requests").setLevel(logging.ERROR)
     logging.getLogger("wxpy").setLevel(logging.WARNING)
 
+    # 需要推送早报的群
+    to_send_new_groups = '''NO.2【深圳市广东海洋大学校友会】
+NO.3深圳市广东海洋大学校友会
+机器人测试'''.split('\n')
+
     key_text = '''【读书】广海互联网社群
     KW：读书
 【游戏】广海互联网社群
@@ -168,7 +173,7 @@ if __name__ == '__main__':
                     # 更新群成员列表
                     group.update_group()
                     if sender in group.members:
-                        logging.info('%s 尝试邀请%s进群【%s】但Ta已经在群里了' % (request_time, msg.sender.name, group.name))
+                        logging.info('%s 尝试邀请【%s】进群【%s】但Ta已经在群里了' % (request_time, msg.sender.name, group.name))
                         return '【机器人】你已经在群里边了吧'
                     else:
                         if add_member_to_group(group, sender):
@@ -215,34 +220,19 @@ if __name__ == '__main__':
     #     g_info = join_keys['资讯']
     #     t = Thread(target=send_news_to_chat, args=(g_info,))
     #     t.start()
+    def start_send_new_thread(group_name):
+        g = bot.search(group_name)
+        if g:
+            g = g[0]
 
-    g_xiaoyou2 = bot.search('NO.2【深圳市广东海洋大学校友会】')
-    if g_xiaoyou2:
-        g_xiaoyou2 = g_xiaoyou2[0]
+            print('找到了群【%s】' % group_name)
+            t = Thread(target=send_news_to_chat, args=(g,))
+            t.start()
 
-        print('找到了No.2校友群')
-        t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou2,))
-        t2.start()
-    else:
-        print('没找到No.2校友群')
+        else:
+            print('没找到群【%s】' % group_name)
 
-    g_xiaoyou3 = bot.search('NO.3深圳市广东海洋大学校友会')
-    if g_xiaoyou3:
-        g_xiaoyou3 = g_xiaoyou3[0]
 
-        print('找到了No.3校友群')
-        t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou3,))
-        t3.start()
-    else:
-        print('没找到No.3校友群')
-
-    g_test = bot.search('机器人测试')
-    if g_test:
-        g_test = g_test[0]
-        print('找到了机器人测试')
-        t4 = Thread(target=send_news_to_chat, args=(g_test,))
-        t4.start()
-    else:
-        print('没找到机器人测试')
-
+    for eg in to_send_new_groups:
+        start_send_new_thread(eg)
     # ↑↑↑↑↑↑------->创建和启动发送新闻的线程<--------↑↑↑↑↑↑
