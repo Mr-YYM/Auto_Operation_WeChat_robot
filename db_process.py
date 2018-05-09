@@ -13,7 +13,7 @@ def insert_cts_toDB(contents):
                            "VALUES (%s, %s, %s, %s, %s)",
                            (v['date_time'], title, v['content'], v['link'], v['src_website'])
                            )
-            print("☆☆数据库更新了: %s " % title)
+            logging.info("☆☆数据库更新了: %s " % title)
         except pymysql.IntegrityError:
             # logging.error("已经有了：" + title)
             alr += 1
