@@ -28,9 +28,9 @@ def send_contents(content, chat):
         chat.send(content)
     except wxpy.ResponseError as exp:
         if exp.err_code == 1100 or 1101 or 1102:
-            print('☆☆账号异常退出，请重新登录☆☆')
+            logging.error('☆☆账号异常退出，请重新登录☆☆')
         else:
-            print('发生了一些错误：', exp)
+            logging.error('发生了一些错误：', exp)
 
 
 def send_news_to_chat(a_chat):
@@ -45,16 +45,16 @@ def send_news_to_chat(a_chat):
         try:
             if is_time(7, 0):
                 times += 1
-                print('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
+                logging.info('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
                                                                      action='☆☆开始进行第%d轮的早报推送☆☆' % times))
 
                 to_send_cts = '校友会早间新闻：\n' + data_getter.get_send_cts(12)
 
-                print("☆☆已经为群【%s】获取了早报信息☆☆\n" % a_chat.name)
+                logging.info("☆☆已经为群【%s】获取了早报信息☆☆\n" % a_chat.name)
 
                 send_contents(to_send_cts, a_chat)
 
-                print('{action:>45}\n{line}{group:^16}{line}\n'.format(line='↑' * 30, group=a_chat.name,
+                logging.info('{action:>45}\n{line}{group:^16}{line}\n'.format(line='↑' * 30, group=a_chat.name,
                                                                        action='☆☆第%d轮的早报推送完成了☆☆' % times))
 
         finally:
@@ -132,7 +132,8 @@ if __name__ == '__main__':
         if r is not None:
             join_keys[r.group()[1:-1].lower()] = eg
 
-    print(join_keys)
+    for ek in join_keys:
+        print(ek)
 
     # ↑↑↑↑↑↑------->提取入群关键字<--------↑↑↑↑↑↑
 
@@ -155,25 +156,24 @@ if __name__ == '__main__':
                 members = group.members  # 群所有成员的集合
 
                 if sender not in members:
-                    print(msg)
                     if add_member_to_group(group, sender):
-                        print('%s 邀请了%s进群【%s】' % (request_time, msg.sender.name, group.name))
+                        logging.info('%s 邀请了%s进群【%s】' % (request_time, msg.sender.name, group.name))
                         time.sleep(0.5)
                         return '【机器人】已经拉你进群或发送邀请，请确认！'
                 else:
                     # 更新群成员列表
                     group.update_group()
                     if sender in group.members:
-                        print('%s 尝试邀请%s进群【%s】但Ta已经在群里了' % (request_time, msg.sender.name, group.name))
+                        logging.info('%s 尝试邀请%s进群【%s】但Ta已经在群里了' % (request_time, msg.sender.name, group.name))
                         return '【机器人】你已经在群里边了吧'
                     else:
                         if add_member_to_group(group, sender):
-                            print('%s 邀请了%s进群【%s】' % (request_time, msg.sender.name, group.name))
+                            logging.info('%s 邀请了%s进群【%s】' % (request_time, msg.sender.name, group.name))
                             time.sleep(0.5)
                             return '【机器人】已经拉你进群或发送邀请，请确认！'
 
             if msg.text == '进群':
-                print('%s %s发送了‘进群’指令' % (request_time, msg.sender.name))
+                logging.info('%s %s发送了‘进群’指令' % (request_time, msg.sender.name))
                 return key_text
 
 
