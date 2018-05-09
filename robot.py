@@ -13,7 +13,8 @@ warnings.filterwarnings('ignore')
 
 
 def is_time(hour, minute):
-    return datetime.time(hour, minute).hour == datetime.datetime.now().time().hour
+    now = datetime.datetime.now().time()
+    return now.hour == hour and now.minute == minute
 
 
 def send_contents(content, chat):
@@ -32,12 +33,11 @@ def send_contents(content, chat):
             print('发生了一些错误：', exp)
 
 
-def send_news_to_chat(a_chat, interval):
+def send_news_to_chat(a_chat):
     """
     ☆☆ 发送新闻主函数 ☆☆
 
     :param a_chat: 聊天对象，群聊（wxpy.Group）或者好友(wxpy.Friend)
-    :param interval: 时间间隔
     """
     times = 0
     while 1:
@@ -46,7 +46,7 @@ def send_news_to_chat(a_chat, interval):
         try:
             if is_time(7, 0):
                 print('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
-                                                                    action='☆☆开始进行第%d轮的早报推送☆☆' % times))
+                                                                     action='☆☆开始进行第%d轮的早报推送☆☆' % times))
 
                 to_send_cts = '校友会早间新闻：\n' + data_getter.get_send_cts(12)
 
@@ -55,12 +55,12 @@ def send_news_to_chat(a_chat, interval):
                 send_contents(to_send_cts, a_chat)
 
                 print('{action:>45}\n{line}{group:^16}{line}\n'.format(line='↑' * 30, group=a_chat.name,
-                                                                   action='☆☆第%d轮的早报推送完成了☆☆' % times))
+                                                                       action='☆☆第%d轮的早报推送完成了☆☆' % times))
 
         finally:
             lock.release()
 
-        time.sleep(interval * 60)
+        time.sleep(60)
 
 
 if __name__ == '__main__':
@@ -134,7 +134,6 @@ if __name__ == '__main__':
 
     print(join_keys)
 
-
     # ↑↑↑↑↑↑------->提取入群关键字<--------↑↑↑↑↑↑
 
     # ------->机器人关键字识别，待进一步实现完善，重构！<--------
@@ -206,7 +205,7 @@ if __name__ == '__main__':
     # ↓↓↓↓↓↓------->创建和启动发送新闻的线程--------↓↓↓↓↓↓
     # if '资讯' in join_keys.keys():
     #     g_info = join_keys['资讯']
-    #     t = Thread(target=send_news_to_chat, args=(g_info, 60,))
+    #     t = Thread(target=send_news_to_chat, args=(g_info,))
     #     t.start()
 
     g_xiaoyou2 = bot.search('NO.2【深圳市广东海洋大学校友会】')
@@ -214,7 +213,7 @@ if __name__ == '__main__':
         g_xiaoyou2 = g_xiaoyou2[0]
 
         print('找到了No.2校友群')
-        t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou2, 30,))
+        t2 = Thread(target=send_news_to_chat, args=(g_xiaoyou2,))
         t2.start()
     else:
         print('没找到No.2校友群')
@@ -224,7 +223,7 @@ if __name__ == '__main__':
         g_xiaoyou3 = g_xiaoyou3[0]
 
         print('找到了No.3校友群')
-        t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou3, 30,))
+        t3 = Thread(target=send_news_to_chat, args=(g_xiaoyou3,))
         t3.start()
     else:
         print('没找到No.3校友群')
@@ -233,10 +232,9 @@ if __name__ == '__main__':
     if g_test:
         g_test = g_test[0]
         print('找到了机器人测试')
-        t4 = Thread(target=send_news_to_chat, args=(g_test, 30,))
+        t4 = Thread(target=send_news_to_chat, args=(g_test,))
         t4.start()
     else:
         print('没找到机器人测试')
-
 
     # ↑↑↑↑↑↑------->创建和启动发送新闻的线程<--------↑↑↑↑↑↑
