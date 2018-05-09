@@ -6,7 +6,6 @@ import logging
 import re
 import db_process
 import time
-import random
 from threading import Thread
 
 warnings.filterwarnings('ignore')
@@ -30,8 +29,12 @@ def update_db(interval=15):
     
     :return:
     """
+    t = 0
     while 1:
         cts = read_contents_from_readhub()
+        t += 1
+        current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+        logging.info('\n%s%s 开始第%d次更新数据库%s' % ('-'*25, current_time, t, '-'*21))
         db_process.insert_cts_toDB(cts)
         time.sleep(interval * 60)
 
@@ -113,11 +116,15 @@ def read_contents_from_readhub():
 
 
 if __name__ == '__main__':
-    gfc = lambda contents: ['【{t:s}】\n{content:s}\n{link:s}\n'.format(t=title, content=v['content'], link=v['link'])
-                            for title, v in contents.items()]
-    raw = read_contents_from_readhub()
-    cts = gfc(raw)
-    for k in cts:
-        print(k)
-        print('----------------------------------------')
+    logging.basicConfig(format='%(message)s', level=logging.INFO)
+    logging.getLogger("requests").setLevel(logging.ERROR)
+    logging.getLogger("wxpy").setLevel(logging.WARNING)
+
+    # gfc = lambda contents: ['【{t:s}】\n{content:s}\n{link:s}\n'.format(t=title, content=v['content'], link=v['link'])
+    #                         for title, v in contents.items()]
+    # raw = read_contents_from_readhub()
+    # cts = gfc(raw)
+    # for k in cts:
+    #     print(k)
+    #     print('----------------------------------------')
     auto_update_db()

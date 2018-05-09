@@ -19,7 +19,7 @@ def insert_cts_toDB(contents):
             alr += 1
         except Exception as exp:
             logging.error("error:" + exp)
-    logging.error("%s\n原来已经有%d个在数据库" % ('-' * 60, alr))
+    logging.info("%s原来已经有%d个在数据库%s\n\n" % ('-' * 30, alr, '-' * 30))
     info_db.commit()
 
 
