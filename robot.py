@@ -41,10 +41,10 @@ def send_news_to_chat(a_chat):
     """
     times = 0
     while 1:
-        times += 1
         lock.acquire()
         try:
             if is_time(7, 0):
+                times += 1
                 print('{line}{group:^16}{line}\n{action:>45}'.format(line='↓' * 30, group=a_chat.name,
                                                                      action='☆☆开始进行第%d轮的早报推送☆☆' % times))
 
