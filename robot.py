@@ -7,6 +7,7 @@ import time
 import logging
 import threading
 from threading import Thread
+import sys
 
 lock = threading.Lock()
 warnings.filterwarnings('ignore')
@@ -126,7 +127,10 @@ NO.3深圳市广东海洋大学校友会
     KW：技术
 '''
     # 扫码登录机器人，并获取所有可识别群组
-    bot = wxpy.Bot(cache_path=True, console_qr=1)
+    if sys.platform == 'win32':
+        bot = wxpy.Bot(cache_path=True)
+    else:
+        bot = wxpy.Bot(cache_path=True, console_qr=1)
     groups = bot.groups()
 
     # 获取所有广海群
