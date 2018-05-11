@@ -29,22 +29,26 @@ def send_contents(content, chat):
         chat.send(content)
     except wxpy.ResponseError as exp:
         if exp.err_code == 1100 or 1101 or 1102:
-            logging.error('☆☆账号异常退出，请重新登录☆☆')
+            logging.error('\n☆☆账号异常退出，请重新登录☆☆')
         else:
-            logging.error('发生了一些错误：', exp)
+            logging.error('\n发生了一些错误：' +  str(exp))
 
 
-def send_news_to_chat(a_chat):
+def send_news_to_chat(a_chat, *target_time):
     """
     ☆☆ 发送新闻主函数 ☆☆
 
     :param a_chat: 聊天对象，群聊（wxpy.Group）或者好友(wxpy.Friend)
     """
     times = 0
+
+    assert len(target_time) == 2
+    hour, minute = target_time
+
     while 1:
         lock.acquire()
         try:
-            if is_time(7, 0):
+            if is_time(hour, minute):
                 times += 1
                 logging.info('\n{line}{group:^16}{line}\n{action}'.format(line='-' * 30, group=a_chat.name,
                                                                           action='☆☆开始进行第%d轮的早报推送☆☆' % times))
@@ -220,19 +224,14 @@ NO.3深圳市广东海洋大学校友会
     # ↓↓↓↓↓↓------->定时（60min）爬取网站，自动更新数据库<--------↓↓↓↓↓↓
     data_getter.auto_update_db(interval=60)
 
-
     # ↓↓↓↓↓↓------->创建和启动发送新闻的线程--------↓↓↓↓↓↓
-    # if '资讯' in join_keys.keys():
-    #     g_info = join_keys['资讯']
-    #     t = Thread(target=send_news_to_chat, args=(g_info,))
-    #     t.start()
     def start_send_new_thread(group_name):
         g = bot.search(group_name)
         if g:
             g = g[0]
 
             print('找到了群【%s】' % group_name)
-            t = Thread(target=send_news_to_chat, args=(g,))
+            t = Thread(target=send_news_to_chat, args=(g, 7, 0))
             t.start()
 
         else:
