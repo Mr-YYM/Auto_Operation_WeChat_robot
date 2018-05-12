@@ -31,27 +31,33 @@ def send_contents(content, chat):
         if exp.err_code == 1100 or 1101 or 1102:
             logging.error('\n☆☆账号异常退出，请重新登录☆☆')
         else:
-            logging.error('\n发生了一些错误：' +  str(exp))
+            logging.error('\n发生了一些错误：' + str(exp))
 
 
 def send_news_to_chat(a_chat, *target_time):
     """
     ☆☆ 发送新闻主函数 ☆☆
 
+    :type target_time: int
+    :param target_time: 接受小时与分钟，只能两个数字哦!
     :param a_chat: 聊天对象，群聊（wxpy.Group）或者好友(wxpy.Friend)
     """
     times = 0
 
-    assert len(target_time) == 2
     hour, minute = target_time
+    assert len(target_time) == 2 and hour <= 23 and minute <= 59
+
+    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
 
     while 1:
         lock.acquire()
         try:
             if is_time(hour, minute):
                 times += 1
-                logging.info('\n{line}{group:^16}{line}\n{action}'.format(line='-' * 30, group=a_chat.name,
-                                                                          action='☆☆开始进行第%d轮的早报推送☆☆' % times))
+                logging.info(
+                    '\n{now_time}\n{line}{group:^16}{line}\n{action}'.format(now_time=now, line='-' * 30,
+                                                                             group=a_chat.name,
+                                                                             action='☆☆开始进行第%d轮的早报推送☆☆' % times))
 
                 to_send_cts = '校友会早间新闻：\n' + data_getter.get_send_cts(12)
 
